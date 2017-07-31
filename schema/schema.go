@@ -3,6 +3,7 @@ package schema
 import (
 	"errors"
 	"fmt"
+	"github.com/Financial-Times/neo-model-utils-go/mapper"
 	"github.com/Financial-Times/neo-utils-go/neoutils"
 	log "github.com/Sirupsen/logrus"
 	"github.com/jmcvetta/neoism"
@@ -84,15 +85,18 @@ func (s *schema) populateMoreSpecificTypes() {
 
 	for _, labelSet := range labelSets {
 		var c *Concept
-		for i, label := range labelSet {
-			if i != 0 {
-				if c.MoreSpecificTypes == nil {
-					c.MoreSpecificTypes = make(map[string]struct{})
+		sortedLabelSet, err := mapper.SortTypes(labelSet)
+		if err == nil {
+			for i, label := range sortedLabelSet {
+				if i != 0 {
+					if c.MoreSpecificTypes == nil {
+						c.MoreSpecificTypes = make(map[string]struct{})
+					}
+					c.MoreSpecificTypes[label] = struct{}{}
+					fmt.Println(c)
 				}
-				c.MoreSpecificTypes[label] = struct{}{}
-				fmt.Println(c)
+				c = s.concepts[label]
 			}
-			c = s.concepts[label]
 		}
 
 	}
