@@ -20,6 +20,14 @@
 			"version": "v1.4.0"
 		},
 		{
+			"checksumSHA1": "ZmT6PPQSF7C4aHQ2HO8QsKtYStg=",
+			"path": "github.com/Financial-Times/neo-model-utils-go/mapper",
+			"revision": "1a5407658c842183647f4799bb66ecac73af97a8",
+			"revisionTime": "2017-04-05T08:23:10Z",
+			"version": "0.2.0",
+			"versionExact": "0.2.0"
+		},
+		{
 			"checksumSHA1": "IDKJ/mqVeFl91y07EpjO6Kbnwnc=",
 			"path": "github.com/Financial-Times/neo-utils-go/neoutils",
 			"revision": "aed125896a5ac0b50296fde5faefed1ebfa7fae3",

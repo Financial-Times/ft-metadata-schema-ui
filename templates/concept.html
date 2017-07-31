@@ -48,14 +48,15 @@
 
       <div class="jumbotron">
         <h1>{{.Label}}</h1>
+        <p>URI: {{.URI}}</p>
         <p>Number of instances: {{.NOfInstances}}</p>
       </div>
         <div class="page-header">
-            <h1>SubConcepts</h1>
+            <h1>More specific Types</h1>
         </div>
         <div class="col-sm-4">
             <ul class="list-group">
-                {{ range $subConcept, $x := .SubConcepts }}
+                {{ range $subConcept, $x := .MoreSpecificTypes }}
                 <li class="list-group-item"> {{ $subConcept }} </li>
                 {{ end }}
             </ul>

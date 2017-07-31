@@ -61,6 +61,7 @@ func (s *schema) init() {
 	for _, label := range labels {
 		c := &Concept{}
 		c.Label = label
+		fmt.Println(label)
 		c.NOfInstances, err = s.getNumberOfInstances(label)
 		if err != nil {
 			log.WithError(err).WithField("concept", label).Warn("Error in getting number of instances")
@@ -68,12 +69,12 @@ func (s *schema) init() {
 		s.concepts[label] = c
 	}
 
-	s.populateSubConcepts()
+	s.populateMoreSpecificTypes()
 
 	log.Info("Concepts loaded")
 }
 
-func (s *schema) populateSubConcepts() {
+func (s *schema) populateMoreSpecificTypes() {
 	log.Info("Inferring sub concepts...")
 	labelSets, err := s.getAllDistinctLabelSets()
 	if err != nil {
@@ -85,10 +86,10 @@ func (s *schema) populateSubConcepts() {
 		var c *Concept
 		for i, label := range labelSet {
 			if i != 0 {
-				if c.SubConcepts == nil {
-					c.SubConcepts = make(map[string]struct{})
+				if c.MoreSpecificTypes == nil {
+					c.MoreSpecificTypes = make(map[string]struct{})
 				}
-				c.SubConcepts[label] = struct{}{}
+				c.MoreSpecificTypes[label] = struct{}{}
 				fmt.Println(c)
 			}
 			c = s.concepts[label]
@@ -127,7 +128,7 @@ func (s *schema) Get(conceptLabel string) (*Concept, error) {
 	if !found {
 		return nil, ErrConceptNotFound
 	}
-	log.Info(c.SubConcepts)
+	log.Info(c.MoreSpecificTypes)
 	return c, nil
 }
 
