@@ -15,7 +15,7 @@ type Property struct {
 	NOfUsage     uint64
 }
 
-func (c Concept) URI() string {
+func (c *Concept) URI() string {
 	uris := mapper.TypeURIs([]string{c.Label})
 	if len(uris) == 0 {
 		return ""
