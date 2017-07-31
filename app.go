@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	s, err := schema.New("http://neo4j:pippo@192.168.99.100:7474/db/data")
+	s, err := schema.New("http://neo4j:pippo@localhost:7474/db/data")
 	if err != nil {
 		log.WithError(err).Fatal()
 	}
