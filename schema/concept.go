@@ -22,3 +22,7 @@ func (c *Concept) URI() string {
 	}
 	return uris[0]
 }
+
+func (c *Concept) ParentType() string {
+	return mapper.ParentType(c.Label)
+}

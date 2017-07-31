@@ -49,9 +49,12 @@
       <div class="jumbotron">
         <h1>{{.Label}}</h1>
         {{with .URI -}}
-        <p>URI: {{.}}</p>
+          <p>URI: {{.}}</p>
         {{end}}
-        <p>Number of instances: {{.NOfInstances}}</p>
+        {{with .ParentType -}}
+          <p>Parent Type: <a href="../{{ . }}">{{ . }}</a></p>
+        {{end}}
+          <p>Number of instances: {{.NOfInstances}}</p>
       </div>
       <div class="row">
         {{with .MoreSpecificTypes -}}
