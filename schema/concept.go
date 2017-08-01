@@ -7,6 +7,7 @@ type Concept struct {
 	NOfInstances      uint64
 	Properties        []Property
 	MoreSpecificTypes map[string]struct{}
+	TopInstances      []Instance
 }
 
 type Property struct {
@@ -25,4 +26,9 @@ func (c *Concept) URI() string {
 
 func (c *Concept) ParentType() string {
 	return mapper.ParentType(c.Label)
+}
+
+type Instance struct {
+	Label     string `json:"n.prefLabel"`
+	TimesUsed uint64 `json:"timesUsed"`
 }

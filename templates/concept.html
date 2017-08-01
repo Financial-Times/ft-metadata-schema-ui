@@ -71,6 +71,20 @@
           </div>
         </div><!-- /.col-sm-4 -->
         {{end}}
+          {{with .TopInstances -}}
+          <div class="col-sm-4">
+              <div class="panel panel-default">
+                  <div class="panel-heading">
+                      <h3 class="panel-title">Top Instances</h3>
+                  </div>
+                  <ul class="list-group">
+                      {{ range $inst := . }}
+                      <li class="list-group-item">{{ $inst.Label }}</li>
+                      {{ end }}
+                  </ul>
+              </div>
+          </div><!-- /.col-sm-4 -->
+          {{end}}
         </div>
     </div>
 

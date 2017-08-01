@@ -62,10 +62,13 @@ func (s *schema) init() {
 	for _, label := range labels {
 		c := &Concept{}
 		c.Label = label
-		fmt.Println(label)
 		c.NOfInstances, err = s.getNumberOfInstances(label)
 		if err != nil {
 			log.WithError(err).WithField("concept", label).Warn("Error in getting number of instances")
+		}
+		c.TopInstances, err = s.getTopInstances(label)
+		if err != nil {
+			log.WithError(err).WithField("concept", label).Warn("Error in getting top instances")
 		}
 		s.concepts[label] = c
 	}
@@ -73,6 +76,21 @@ func (s *schema) init() {
 	s.populateMoreSpecificTypes()
 
 	log.Info("Concepts loaded")
+}
+
+func (s *schema) getTopInstances(conceptType string) ([]Instance, error) {
+	log.Infof("Getting top instances for %v...", conceptType)
+	nr := []Instance{}
+	query := &neoism.CypherQuery{
+		Statement: `MATCH (n:` + conceptType + `)--(x)
+					WITH  n, count(x) AS timeUsed
+					ORDER BY timeUsed DESC
+					RETURN n.prefLabel, timeUsed LIMIT 10`,
+		Result: &nr,
+	}
+	err := s.db.CypherBatch([]*neoism.CypherQuery{query})
+
+	return nr, err
 }
 
 func (s *schema) populateMoreSpecificTypes() {
@@ -116,7 +134,6 @@ func (s *schema) getAllDistinctLabelSets() ([][]string, error) {
 	for _, e := range nr {
 		labelSets = append(labelSets, e["labelSet"])
 	}
-	fmt.Println(labelSets)
 	return labelSets, nil
 }
 
