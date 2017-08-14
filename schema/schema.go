@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+const oneYearInSeconds = 31556926
+
 var (
 	ErrConceptNotFound = errors.New("concept no found")
 )
@@ -34,7 +36,7 @@ func New(neoEndpoint string) (Schema, error) {
 			Transport: &http.Transport{
 				MaxIdleConnsPerHost: 100,
 			},
-			Timeout: 5 * time.Minute,
+			Timeout: 10 * time.Minute,
 		},
 		BackgroundConnect: true,
 	}
@@ -82,11 +84,13 @@ func (s *schema) getTopInstances(conceptType string) ([]Instance, error) {
 	log.Infof("Getting top instances for %v...", conceptType)
 	nr := []Instance{}
 	query := &neoism.CypherQuery{
-		Statement: `MATCH (n:` + conceptType + `)--(x)
-					WITH  n, count(x) AS timeUsed
-					ORDER BY timeUsed DESC
-					RETURN n.prefLabel, timeUsed LIMIT 10`,
-		Result: &nr,
+		Statement: `MATCH (n:` + conceptType + `)--(x:Content)
+					WHERE x.publishedDateEpoch > {time}
+					WITH  n, count(x) AS timesUsed
+					ORDER BY timesUsed DESC
+					RETURN n.prefLabel, labels(n) as types, timesUsed LIMIT 10`,
+		Parameters: neoism.Props{"time": time.Now().Unix() - oneYearInSeconds},
+		Result:     &nr,
 	}
 	err := s.db.CypherBatch([]*neoism.CypherQuery{query})
 

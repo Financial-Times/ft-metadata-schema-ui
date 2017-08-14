@@ -29,6 +29,12 @@ func (c *Concept) ParentType() string {
 }
 
 type Instance struct {
-	Label     string `json:"n.prefLabel"`
-	TimesUsed uint64 `json:"timesUsed"`
+	Label     string   `json:"n.prefLabel"`
+	TimesUsed uint64   `json:"timesUsed"`
+	Types     []string `json:types`
+}
+
+func (i *Instance) MostSpecificType() string {
+	t, _ := mapper.MostSpecificType(i.Types)
+	return t
 }

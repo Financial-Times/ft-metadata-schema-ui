@@ -59,13 +59,13 @@
       <div class="row">
         {{with .MoreSpecificTypes -}}
         <div class="col-sm-4">
-          <div class="panel panel-default">
+          <div class="panel panel-primary">
             <div class="panel-heading">
               <h3 class="panel-title">More specific Types</h3>
             </div>
               <ul class="list-group">
                 {{ range $subConcept, $x := . }}
-                <li class="list-group-item"><a href="../{{ $subConcept }}">{{ $subConcept }}</a></li>
+                <li class="list-group-item"><b><a href="../{{ $subConcept }}">{{ $subConcept }}</a></b></li>
                 {{ end }}
               </ul>
           </div>
@@ -73,13 +73,16 @@
         {{end}}
           {{with .TopInstances -}}
           <div class="col-sm-4">
-              <div class="panel panel-default">
+              <div class="panel panel-info">
                   <div class="panel-heading">
                       <h3 class="panel-title">Top Instances</h3>
                   </div>
                   <ul class="list-group">
                       {{ range $inst := . }}
-                      <li class="list-group-item">{{ $inst.Label }}</li>
+                      <li class="list-group-item">
+                          <p class="list-group-item-heading"><b> {{ $inst.Label }} (<a href="../{{ $inst.MostSpecificType }}">{{ $inst.MostSpecificType }}</a>)</b></p>
+                          <p class="list-group-item-text"><small>Used {{ $inst.TimesUsed }} times</small></p>
+                      </li>
                       {{ end }}
                   </ul>
               </div>
