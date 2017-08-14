@@ -72,6 +72,16 @@ func (s *schema) init() {
 		if err != nil {
 			log.WithError(err).WithField("concept", label).Warn("Error in getting top instances")
 		}
+		if len(c.TopInstances) == 0 {
+			c.SomeInstances, err = s.getSomeInstances(label)
+			if err != nil {
+				log.WithError(err).WithField("concept", label).Warn("Error in getting some instances")
+			}
+		}
+		c.Properties, err = s.getProperties(label)
+		if err != nil {
+			log.WithError(err).WithField("concept", label).Warn("Error in properties")
+		}
 		s.concepts[label] = c
 	}
 
@@ -93,7 +103,19 @@ func (s *schema) getTopInstances(conceptType string) ([]Instance, error) {
 		Result:     &nr,
 	}
 	err := s.db.CypherBatch([]*neoism.CypherQuery{query})
+	return nr, err
+}
 
+func (s *schema) getSomeInstances(conceptType string) ([]Instance, error) {
+	log.Infof("Getting some instances for %v...", conceptType)
+	nr := []Instance{}
+	query := &neoism.CypherQuery{
+		Statement: `MATCH (n:` + conceptType + `)
+					RETURN n.prefLabel, labels(n) as types LIMIT 10`,
+		Result: &nr,
+	}
+	err := s.db.CypherBatch([]*neoism.CypherQuery{query})
+	fmt.Println(nr)
 	return nr, err
 }
 
@@ -110,6 +132,17 @@ func (s *schema) populateMoreSpecificTypes() {
 		sortedLabelSet, err := mapper.SortTypes(labelSet)
 		if err == nil {
 			for i, label := range sortedLabelSet {
+				if i != 0 {
+					if c.MoreSpecificTypes == nil {
+						c.MoreSpecificTypes = make(map[string]struct{})
+					}
+					c.MoreSpecificTypes[label] = struct{}{}
+					fmt.Println(c)
+				}
+				c = s.concepts[label]
+			}
+		} else {
+			for i, label := range labelSet {
 				if i != 0 {
 					if c.MoreSpecificTypes == nil {
 						c.MoreSpecificTypes = make(map[string]struct{})
@@ -139,6 +172,18 @@ func (s *schema) getAllDistinctLabelSets() ([][]string, error) {
 		labelSets = append(labelSets, e["labelSet"])
 	}
 	return labelSets, nil
+}
+
+func (s *schema) getProperties(conceptType string) ([]Property, error) {
+	log.Infof("Getting properties for %v...", conceptType)
+	nr := []Property{}
+
+	query := &neoism.CypherQuery{
+		Statement: `MATCH (z:` + conceptType + `)-[x]->(y) WITH type(x) as t, count(x) as n RETURN t,n`,
+		Result:    &nr,
+	}
+	err := s.db.CypherBatch([]*neoism.CypherQuery{query})
+	return nr, err
 }
 
 type labelSetEntity struct {
@@ -198,3 +243,5 @@ func (s *schema) getNumberOfInstances(conceptLabel string) (uint64, error) {
 type countEntity struct {
 	N uint64 `json:"n"`
 }
+
+//

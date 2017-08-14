@@ -57,6 +57,23 @@
           <p>Number of instances: {{.NOfInstances}}</p>
       </div>
       <div class="row">
+          {{with .Properties -}}
+          <div class="col-sm-4">
+              <div class="panel panel-primary">
+                  <div class="panel-heading">
+                      <h3 class="panel-title">Properties</h3>
+                  </div>
+                  <ul class="list-group">
+                      {{ range $p := . }}
+                      <li class="list-group-item">
+                          <p class="list-group-item-heading"><b> {{ $p.Type }}</b></p>
+                          <p class="list-group-item-text"><small>Used {{ $p.NOfUsage }} times</small></p>
+                      </li>
+                      {{ end }}
+                  </ul>
+              </div>
+          </div><!-- /.col-sm-4 -->
+          {{end}}
         {{with .MoreSpecificTypes -}}
         <div class="col-sm-4">
           <div class="panel panel-primary">
@@ -75,13 +92,29 @@
           <div class="col-sm-4">
               <div class="panel panel-info">
                   <div class="panel-heading">
-                      <h3 class="panel-title">Top Instances</h3>
+                      <h3 class="panel-title">Top instances for content annotation</h3>
                   </div>
                   <ul class="list-group">
                       {{ range $inst := . }}
                       <li class="list-group-item">
                           <p class="list-group-item-heading"><b> {{ $inst.Label }} (<a href="../{{ $inst.MostSpecificType }}">{{ $inst.MostSpecificType }}</a>)</b></p>
                           <p class="list-group-item-text"><small>Used {{ $inst.TimesUsed }} times</small></p>
+                      </li>
+                      {{ end }}
+                  </ul>
+              </div>
+          </div><!-- /.col-sm-4 -->
+          {{end}}
+          {{with .SomeInstances -}}
+          <div class="col-sm-4">
+              <div class="panel panel-default">
+                  <div class="panel-heading">
+                      <h3 class="panel-title">Some instances</h3>
+                  </div>
+                  <ul class="list-group">
+                      {{ range $inst := . }}
+                      <li class="list-group-item">
+                          <p class="list-group-item-heading"><b> {{ $inst.Label }} (<a href="../{{ $inst.MostSpecificType }}">{{ $inst.MostSpecificType }}</a>)</b></p>
                       </li>
                       {{ end }}
                   </ul>

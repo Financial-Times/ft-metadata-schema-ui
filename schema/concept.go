@@ -8,12 +8,13 @@ type Concept struct {
 	Properties        []Property
 	MoreSpecificTypes map[string]struct{}
 	TopInstances      []Instance
+	SomeInstances     []Instance
 }
 
 type Property struct {
-	Label        string
+	Type         string `json:"t"`
 	ExpectedType string
-	NOfUsage     uint64
+	NOfUsage     uint64 `json:"n"`
 }
 
 func (c *Concept) URI() string {
@@ -30,11 +31,14 @@ func (c *Concept) ParentType() string {
 
 type Instance struct {
 	Label     string   `json:"n.prefLabel"`
-	TimesUsed uint64   `json:"timesUsed"`
-	Types     []string `json:types`
+	TimesUsed uint64   `json:"timesUsed,omitempty"`
+	Types     []string `json:"types"`
 }
 
 func (i *Instance) MostSpecificType() string {
-	t, _ := mapper.MostSpecificType(i.Types)
-	return t
+	t, err := mapper.MostSpecificType(i.Types)
+	if err != nil {
+		return t
+	}
+	return i.Types[len(i.Types)-1]
 }
